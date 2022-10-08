@@ -11,7 +11,8 @@ export const useSelector=()=>{
 
   useEffect(() => {
     listeners.push(setState); 
-    //(↑) IMP: pushing component instance of setState into listener array.(This will be different for each call to useStore)
+    /*(↑) IMP: pushing component instance of setState into listener array.
+    (This will be different for each call to useStore) */
     //Good Example of JS Closure.
 
     return () => {
@@ -32,6 +33,11 @@ export const useDispatch=()=>{
     const dispatch = (actionIdentifier, payload) => {
       const newState = actions[actionIdentifier](globalState, payload);
       globalState = { ...globalState, ...newState };
+
+      //VERY IMP: call `setState instance of all component`, which have a store subscription     
+      
+      //As setState is binded to specific caller Component => React will re-render that 
+      //component => useSelector will be execute again & Component will get latest state
 
       for (const listener of listeners) {
         listener(globalState);
